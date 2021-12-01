@@ -17,7 +17,7 @@ fun part2(input: List<Int>): Int = part1(input.triples().map { it.first + it.sec
 private fun <T> List<T>.triples(): List<Triple<T, T, T>> {
     return this.mapIndexed { i, v ->
         if (i + 2 < this.size) {
-            Triple(this[i], this[i + 1], this[i + 2])
+            Triple(v, this[i + 1], this[i + 2])
         } else null
     }.filterNotNull()
 }
