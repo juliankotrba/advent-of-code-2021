@@ -21,5 +21,3 @@ private fun <T> List<T>.triples(): List<Triple<T, T, T>> {
         } else null
     }.filterNotNull()
 }
-
-g
