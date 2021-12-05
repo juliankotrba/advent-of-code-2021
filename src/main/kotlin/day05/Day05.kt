@@ -1,41 +1,29 @@
 package day05
 
-import javafx.geometry.Pos
-import listOfInt
 import parseFile
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 fun main() {
-
-    val testInput = parsePositions("""
-        0,9 -> 5,9
-        8,0 -> 0,8
-        9,4 -> 3,4
-        2,2 -> 2,1
-        7,0 -> 7,4
-        6,4 -> 2,0
-        0,9 -> 2,9
-        3,4 -> 1,4
-        0,0 -> 8,8
-        5,5 -> 8,2
-    """.trimIndent().lines())
-
     val input = parseFile("src/main/kotlin/day05/input") { parsePositions(it) }
 
-    println("Part 1: " + part1(testInput))
     println("Part 1: " + part1(input))
+    println("Part 2: " + part2(input))
 }
 
 typealias Position = Pair<Int, Int>
 typealias Line = Pair<Position, Position>
 
 fun part1(input: List<Line>) =
-        input.flatMap { getPositionsBetween(it) }
+        input.flatMap { getPositionsBetween(it, false) }
                 .groupBy { it }
                 .count { it.value.size > 1 }
 
-private fun getPositionsBetween(line: Line): List<Position> {
+fun part2(input: List<Line>) =
+        input.flatMap { getPositionsBetween(it, true) }
+                .groupBy { it }
+                .count { it.value.size > 1 }
+
+private fun getPositionsBetween(line: Line, includeDiagonal: Boolean): List<Position> {
 
     val start = line.first
     val end = line.second
@@ -51,8 +39,21 @@ private fun getPositionsBetween(line: Line): List<Position> {
     } else if (start.second == end.second && start.first > end.first) {
         (end.first..start.first).map { Position(it, start.second) }
     } else {
-        // diagonal - ignore
-        listOf()
+        return if (includeDiagonal) {
+            val xStep = if (start.first > end.first) -1 else 1
+            val yStep = if (start.second > end.second) -1 else 1
+
+            val positions = mutableListOf<Position>()
+
+            var curr = line.first
+            positions.add(curr)
+            while (curr != line.second) {
+                curr = Position(curr.first + xStep, curr.second + yStep)
+                positions.add(curr)
+            }
+
+            positions
+        } else emptyList()
     }
 }
 
